@@ -11,8 +11,14 @@ export function getPostExcerpt(content: string, existingExcerpt?: string, limit:
                 (b: any) => b.type === 'paragraph' || b.type === 'header'
             );
             if (textBlock) {
-                // Strip HTML tags from the block text if any
-                const plainText = textBlock.data.text.replace(/<[^>]+>/g, '');
+                // Strip HTML tags and decode common entities
+                const plainText = textBlock.data.text
+                    .replace(/<[^>]+>/g, '')
+                    .replace(/&nbsp;/g, ' ')
+                    .replace(/&amp;/g, '&')
+                    .replace(/&lt;/g, '<')
+                    .replace(/&gt;/g, '>')
+                    .replace(/&quot;/g, '"');
                 return plainText.substring(0, limit) + (plainText.length > limit ? '...' : '');
             }
             return 'Click to read post...'; // Fallback if only images/custom blocks

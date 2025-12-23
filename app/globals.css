@@ -1,1 +1,33 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* Editor Headings Override */
+.prose h1,
+.ce-header[data-level="1"] {
+    font-size: 1.75rem;
+    line-height: 2rem;
+    font-weight: 800;
+    margin-bottom: 0.75rem;
+    margin-top: 1.5rem;
+    color: #111827;
+}
+
+.prose h2,
+.ce-header {
+    font-size: 1.5rem;
+    line-height: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    margin-top: 1.25rem;
+    color: #1f2937;
+}
+
+.prose h3,
+.ce-header[data-level="3"] {
+    font-size: 1.25rem;
+    line-height: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    margin-top: 1rem;
+    color: #374151;
+}

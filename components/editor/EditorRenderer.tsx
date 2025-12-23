@@ -45,9 +45,24 @@ function Block({ block }: { block: any }) {
             const ListTag = block.data.style === 'ordered' ? 'ol' : 'ul';
             return (
                 <ListTag>
-                    {block.data.items.map((item: string, i: number) => (
-                        <li key={i} dangerouslySetInnerHTML={{ __html: item }} />
-                    ))}
+                    {block.data.items.map((item: any, i: number) => {
+                        // Handle new object format for list items (Editor.js v2.26+)
+                        const content = typeof item === 'string' ? item : item.content;
+                        return (
+                            <li key={i}>
+                                <div dangerouslySetInnerHTML={{ __html: content }} />
+                                {/* Handle nested lists if present */}
+                                {item.items && item.items.length > 0 && (
+                                    <ListTag>
+                                        {item.items.map((subItem: any, j: number) => {
+                                            const subContent = typeof subItem === 'string' ? subItem : subItem.content;
+                                            return <li key={j} dangerouslySetInnerHTML={{ __html: subContent }} />;
+                                        })}
+                                    </ListTag>
+                                )}
+                            </li>
+                        );
+                    })}
                 </ListTag>
             );
 

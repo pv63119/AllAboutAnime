@@ -7,9 +7,10 @@ interface ImageUploadProps {
     value?: string;
     onChange: (url: string) => void;
     label?: string;
+    compact?: boolean;
 }
 
-export default function ImageUpload({ value, onChange, label = "Upload Image" }: ImageUploadProps) {
+export default function ImageUpload({ value, onChange, label = "Upload Image", compact = false }: ImageUploadProps) {
     const [uploading, setUploading] = useState(false);
     const [progress, setProgress] = useState(0);
 
@@ -75,9 +76,9 @@ export default function ImageUpload({ value, onChange, label = "Upload Image" }:
         <div className="w-full">
             <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
 
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:bg-gray-50 transition-colors">
+            <div className={`border-2 border-dashed border-gray-300 rounded-lg text-center hover:bg-gray-50 transition-colors ${compact ? 'p-3' : 'p-6'}`}>
                 {value ? (
-                    <div className="relative aspect-video w-full overflow-hidden rounded-lg mb-4">
+                    <div className={`relative overflow-hidden rounded-lg ${compact ? 'h-20 w-36 mx-auto shadow-sm ring-1 ring-gray-200' : 'aspect-video w-full mb-4'}`}>
                         <img src={value} alt="Uploaded" className="object-cover w-full h-full" />
                         <button
                             type="button"

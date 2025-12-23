@@ -7,7 +7,8 @@ interface PostPreviewProps {
     content: string;
     coverImage?: string;
     authorName?: string;
-    createdAt?: string; // ISO date string or formatted date
+    createdAt?: string;
+    className?: string; // Allow custom styling
 }
 
 export default function PostPreview({
@@ -15,14 +16,15 @@ export default function PostPreview({
     content,
     coverImage,
     authorName = 'Unknown Author',
-    createdAt
+    createdAt,
+    className = ''
 }: PostPreviewProps) {
     const formattedDate = createdAt
         ? new Date(createdAt).toLocaleDateString()
         : new Date().toLocaleDateString();
 
     return (
-        <article className="min-h-screen bg-white py-16 px-4 sm:px-6 lg:px-8">
+        <article className={`min-h-screen bg-white py-16 px-4 sm:px-6 lg:px-8 ${className}`}>
             <div className="mx-auto max-w-3xl">
                 <div className="text-center">
                     <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">{title || 'Untitled Post'}</h1>

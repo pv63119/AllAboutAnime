@@ -31,6 +31,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
 
     const isActive = (path: string) => pathname === path;
+    const isEditor = pathname.includes('/create') || pathname.includes('/edit');
     const baseLinkClass = "block border-l-4 px-6 py-3 transition-colors duration-200";
     const activeClass = "bg-blue-50 border-blue-500 text-blue-700 font-medium";
     const inactiveClass = "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-900";
@@ -109,37 +110,39 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
             {/* Main Content */}
             <main className="lg:ml-64 min-h-screen flex flex-col transition-all duration-300">
-                {/* Top Header */}
-                <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-20 px-4 sm:px-8 py-4 flex justify-between items-center">
-                    <div className="flex items-center gap-4">
-                        <button
-                            onClick={() => setIsSidebarOpen(true)}
-                            className="lg:hidden p-2 -ml-2 text-gray-600 hover:bg-gray-100 rounded-md"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                            </svg>
-                        </button>
-                        <h2 className="text-lg font-semibold text-gray-800">
-                            {pathname.includes('/create') ? 'Create Post' :
-                                pathname.includes('/edit') ? 'Edit Post' :
-                                    pathname.includes('/admin') ? 'Administration' :
-                                        pathname.includes('/author/posts') ? 'My Posts' :
-                                            'Dashboard'}
-                        </h2>
-                    </div>
-
-                    {['admin', 'author'].includes(user.role) && (
-                        <Link href="/author/posts/create">
-                            <button className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 sm:px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
-                                <span className="hidden sm:inline">+ Create Post</span>
-                                <span className="sm:hidden">+</span>
+                {/* Top Header - Hidden on Editor Pages */}
+                {!isEditor && (
+                    <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-20 px-4 sm:px-8 py-4 flex justify-between items-center">
+                        <div className="flex items-center gap-4">
+                            <button
+                                onClick={() => setIsSidebarOpen(true)}
+                                className="lg:hidden p-2 -ml-2 text-gray-600 hover:bg-gray-100 rounded-md"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                                </svg>
                             </button>
-                        </Link>
-                    )}
-                </header>
+                            <h2 className="text-lg font-semibold text-gray-800">
+                                {pathname.includes('/create') ? 'Create Post' :
+                                    pathname.includes('/edit') ? 'Edit Post' :
+                                        pathname.includes('/admin') ? 'Administration' :
+                                            pathname.includes('/author/posts') ? 'My Posts' :
+                                                'Dashboard'}
+                            </h2>
+                        </div>
 
-                <div className="p-4 sm:p-8 flex-1">
+                        {['admin', 'author'].includes(user.role) && !isEditor && (
+                            <Link href="/author/posts/create">
+                                <button className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 sm:px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                                    <span className="hidden sm:inline">+ Create Post</span>
+                                    <span className="sm:hidden">+</span>
+                                </button>
+                            </Link>
+                        )}
+                    </header>
+                )}
+
+                <div className={`flex-1 ${isEditor ? 'p-0' : 'p-4 sm:p-8'}`}>
                     {children}
                 </div>
             </main>

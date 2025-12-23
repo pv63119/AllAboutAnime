@@ -129,5 +129,5 @@ export default function Editor({ onChange, initialContent, placeholder }: Editor
         };
     }, []); // Empty dependency array to init once. We don't want re-init on content change as Editor handles internal state.
 
-    return <div id={holderId} className="prose prose-lg max-w-none min-h-[500px]" />;
+    return <div id={holderId} className="prose prose-sm max-w-none min-h-[500px]" />;
 }
