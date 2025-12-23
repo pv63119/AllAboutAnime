@@ -1,4 +1,6 @@
 import UserAvatar from '@/components/UserAvatar';
+import Image from 'next/image';
+import EditorRenderer from '@/components/editor/EditorRenderer';
 
 interface PostPreviewProps {
     title: string;
@@ -36,14 +38,20 @@ export default function PostPreview({
                 </div>
 
                 {coverImage && (
-                    <div className="mt-8">
-                        <img src={coverImage} className="w-full rounded-lg object-cover" alt={title} />
+                    <div className="mt-8 relative aspect-video">
+                        <Image
+                            src={coverImage}
+                            className="rounded-lg object-cover"
+                            alt={title}
+                            fill
+                            priority
+                            sizes="(max-width: 768px) 100vw, 800px"
+                        />
                     </div>
                 )}
 
-                <div className="mt-12 prose prose-lg prose-blue mx-auto text-gray-500">
-                    {/* Simple whitespace handling as per original implementation */}
-                    <div dangerouslySetInnerHTML={{ __html: (content || '').replace(/\n/g, '<br />') }} />
+                <div className="mt-12">
+                    <EditorRenderer content={content} />
                 </div>
             </div>
         </article>

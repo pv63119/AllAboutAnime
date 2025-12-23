@@ -4,10 +4,12 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Textarea } from '@/components/ui/Textarea';
 import ImageUpload from '@/components/ui/ImageUpload';
 import PostPreview from '@/components/PostPreview';
 import { useAuth } from '@/app/context/AuthContext';
+import dynamic from 'next/dynamic';
+
+const Editor = dynamic(() => import('@/components/editor/Editor'), { ssr: false });
 
 interface PostData {
     _id?: string;
@@ -40,9 +42,27 @@ export default function PostEditor({ initialData, isEditing = false }: PostEdito
         setSubmitting(true);
 
         const tagsArray = tags.split(',').map(t => t.trim()).filter(Boolean);
+        // Generate dynamic excerpt
+        let plainTextExcerpt = '';
+        try {
+            const data = JSON.parse(content);
+            if (data.blocks) {
+                const paragraph = data.blocks.find((b: any) => b.type === 'paragraph');
+                if (paragraph) {
+                    // Strip basic HTML if present in text
+                    plainTextExcerpt = paragraph.data.text.replace(/<[^>]+>/g, '');
+                }
+            }
+        } catch (e) {
+            plainTextExcerpt = content;
+        }
+
+        const excerpt = plainTextExcerpt.substring(0, 150) + (plainTextExcerpt.length > 150 ? '...' : '');
+
         const payload = {
             title,
             content,
+            excerpt,
             coverImage,
             tags: tagsArray,
             status
@@ -145,16 +165,13 @@ export default function PostEditor({ initialData, isEditing = false }: PostEdito
                         </div>
                     </div>
 
-                    <Textarea
-                        name="content"
-                        label="Content (Markdown supported)"
-                        placeholder="Write your masterpiece here..."
-                        value={content}
-                        onChange={(e) => setContent(e.target.value)}
-                        rows={15}
-                        required
-                        className="font-mono text-sm"
-                    />
+                    <div className="min-h-[500px] border border-gray-300 rounded-lg p-4 bg-white">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Content</label>
+                        <Editor
+                            initialContent={content}
+                            onChange={setContent}
+                        />
+                    </div>
                 </div>
             </div>
 

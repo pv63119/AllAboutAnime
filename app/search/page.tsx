@@ -1,7 +1,9 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import Post from '@/models/Post';
 import '@/models/User'; // Force model registration
 import UserAvatar from '@/components/UserAvatar';
+import { getPostExcerpt } from '@/lib/utils/format';
 import dbConnect from '@/lib/db/connect';
 
 async function getSearchResults(query: string) {
@@ -26,6 +28,7 @@ async function getSearchResults(query: string) {
     // Serialize Mongo ID objects
     return posts.map(post => ({
         ...post,
+        excerpt: getPostExcerpt(post.content, post.excerpt),
         _id: post._id.toString(),
         author: { ...post.author, _id: post.author._id.toString() },
         createdAt: post.createdAt.toISOString(),
@@ -60,10 +63,12 @@ export default async function SearchPage({
                                 {post.coverImage && (
                                     <Link href={`/blog/${post.slug}`} className="cursor-pointer group overflow-hidden">
                                         <div className="h-80 w-full relative">
-                                            <img
-                                                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                            <Image
+                                                className="object-cover transition-transform duration-500 group-hover:scale-105"
                                                 src={post.coverImage}
                                                 alt={post.title}
+                                                fill
+                                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                             />
                                         </div>
                                     </Link>
@@ -87,7 +92,7 @@ export default async function SearchPage({
                                                 {post.title}
                                             </h3>
                                             <p className="mt-3 text-lg text-gray-600 leading-relaxed">
-                                                {post.excerpt || post.content.substring(0, 200)}...
+                                                {post.excerpt}
                                             </p>
                                         </Link>
                                     </div>

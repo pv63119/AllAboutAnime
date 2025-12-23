@@ -1,8 +1,10 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import dbConnect from '@/lib/db/connect';
 import Post from '@/models/Post';
 import '@/models/User'; // Force model registration
 import UserAvatar from '@/components/UserAvatar';
+import { getPostExcerpt } from '@/lib/utils/format';
 
 async function getPosts() {
     await dbConnect();
@@ -15,6 +17,7 @@ async function getPosts() {
     // Serialize Mongo ID objects
     return posts.map(post => ({
         ...post,
+        excerpt: getPostExcerpt(post.content, post.excerpt),
         _id: post._id.toString(),
         author: { ...post.author, _id: post.author._id.toString() },
         createdAt: post.createdAt.toISOString(),
@@ -42,15 +45,18 @@ export default async function HomePage() {
                     {/* Main Feed */}
                     <div className="lg:col-span-2 flex flex-col gap-8">
                         {posts.length > 0 ? (
-                            posts.map((post: any) => (
+                            posts.map((post: any, index: number) => (
                                 <div key={post._id} className="flex flex-col overflow-hidden rounded-2xl shadow-md bg-white border border-gray-100 transition-all hover:shadow-xl duration-300">
                                     {post.coverImage && (
                                         <Link href={`/blog/${post.slug}`} className="cursor-pointer group overflow-hidden">
                                             <div className="h-80 w-full relative">
-                                                <img
-                                                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                                <Image
+                                                    className="object-cover transition-transform duration-500 group-hover:scale-105"
                                                     src={post.coverImage}
                                                     alt={post.title}
+                                                    fill
+                                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                                    priority={index < 2}
                                                 />
                                             </div>
                                         </Link>
@@ -74,7 +80,7 @@ export default async function HomePage() {
                                                     {post.title}
                                                 </h3>
                                                 <p className="mt-3 text-lg text-gray-600 leading-relaxed">
-                                                    {post.excerpt || post.content.substring(0, 200)}...
+                                                    {post.excerpt}
                                                 </p>
                                             </Link>
                                         </div>
