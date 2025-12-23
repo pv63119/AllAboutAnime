@@ -9,7 +9,7 @@ export const createPostSchema = z.object({
     tags: z.array(z.string()).optional(),
     categories: z.array(z.string()).optional(),
     status: z.enum(['draft', 'published', 'archived']).default('draft'),
-    coverImage: z.string().url().optional(),
+    coverImage: z.string().url().optional().or(z.literal('')),
 });
 
 export const updatePostSchema = createPostSchema.partial();
