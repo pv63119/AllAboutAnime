@@ -104,16 +104,16 @@ export default function PostEditor({ initialData, isEditing = false }: PostEdito
     return (
         <div className="h-screen flex flex-col bg-gray-50">
             {/* Unified Header */}
-            <div className="h-16 px-6 border-b border-gray-200 bg-white flex items-center justify-between z-20 shrink-0 shadow-sm">
+            <div className="h-16 px-4 md:px-6 border-b border-gray-200 bg-white flex items-center justify-between z-20 shrink-0 shadow-sm">
                 <h2 className="text-lg font-bold text-gray-900 tracking-tight">{isEditing ? 'Edit Post' : 'Create Post'}</h2>
 
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 md:gap-4">
                     <div className="flex items-center gap-2">
-                        <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</label>
+                        <label className="hidden sm:block text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</label>
                         <select
                             value={status}
                             onChange={(e) => setStatus(e.target.value)}
-                            className="block rounded-md border-gray-300 border px-3 py-1.5 text-sm text-gray-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                            className="block rounded-md border-gray-300 border px-2 py-1.5 text-sm text-gray-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                         >
                             <option value="draft">Draft</option>
                             <option value="published">Published</option>
@@ -121,21 +121,21 @@ export default function PostEditor({ initialData, isEditing = false }: PostEdito
                         </select>
                     </div>
 
-                    <div className="h-6 w-px bg-gray-300 mx-2" />
+                    <div className="h-6 w-px bg-gray-300 mx-1 md:mx-2" />
 
-                    <div className="flex gap-3">
+                    <div className="flex gap-2 md:gap-3">
                         <Button
                             variant="secondary"
                             onClick={() => router.back()}
                             disabled={submitting}
-                            className="!py-1.5"
+                            className="!py-1.5 !px-3 text-xs md:text-sm"
                         >
                             Cancel
                         </Button>
                         <Button
                             onClick={handleSubmit}
                             isLoading={submitting}
-                            className="!py-1.5"
+                            className="!py-1.5 !px-3 text-xs md:text-sm"
                         >
                             {isEditing ? 'Update' : 'Publish'}
                         </Button>
@@ -147,7 +147,7 @@ export default function PostEditor({ initialData, isEditing = false }: PostEdito
             <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
                 {/* Editor Panel (Left) */}
                 <div className="w-full md:w-2/3 flex flex-col h-full border-r border-gray-200 bg-white overflow-y-auto">
-                    <div className="p-8 max-w-4xl mx-auto w-full space-y-8">
+                    <div className="p-4 md:p-8 max-w-4xl mx-auto w-full space-y-6 md:space-y-8">
                         <Input
                             name="title"
                             label="Post Title"
@@ -155,11 +155,11 @@ export default function PostEditor({ initialData, isEditing = false }: PostEdito
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             required
-                            className="text-2xl font-bold p-4"
+                            className="text-xl md:text-2xl font-bold p-2 md:p-4"
                         />
 
-                        <div className="flex gap-6">
-                            <div className="w-1/2">
+                        <div className="flex flex-col md:flex-row gap-6">
+                            <div className="w-full md:w-1/2">
                                 <ImageUpload
                                     value={coverImage}
                                     onChange={setCoverImage}
@@ -167,14 +167,14 @@ export default function PostEditor({ initialData, isEditing = false }: PostEdito
                                     compact={true}
                                 />
                             </div>
-                            <div className="w-1/2 flex flex-col">
+                            <div className="w-full md:w-1/2 flex flex-col">
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Tags</label>
                                 <textarea
                                     name="tags"
                                     placeholder="anime, review, news..."
                                     value={tags}
                                     onChange={(e) => setTags(e.target.value)}
-                                    className="block w-full flex-1 rounded-lg border border-gray-300 p-4 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 resize-none transition-shadow"
+                                    className="block w-full flex-1 rounded-lg border border-gray-300 p-4 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 resize-none transition-shadow min-h-[100px] md:min-h-0"
                                 />
                             </div>
                         </div>

@@ -104,6 +104,28 @@ export default function DashboardPage() {
                     </div>
                 </div>
             </div>
+            {/* Become an Author Footer (Only for Readers) */}
+            {
+                user?.role === 'reader' && (
+                    <div className="rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 p-8 text-white shadow-lg">
+                        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                            <div>
+                                <h3 className="text-2xl font-bold mb-2">Want to become an Author?</h3>
+                                <p className="text-indigo-100 max-w-xl">
+                                    Join our community of writers and share your passion for anime with the world.
+                                    Request author access to start publishing your own stories.
+                                </p>
+                            </div>
+                            <a
+                                href="mailto:allaboutanime1104@gmail.com?subject=Request for Author Access&body=Hi, I would like to request author access for my account."
+                                className="inline-flex items-center justify-center rounded-lg bg-white px-6 py-3 text-sm font-semibold text-indigo-600 shadow-sm hover:bg-indigo-50 transition-colors whitespace-nowrap"
+                            >
+                                Request Access
+                            </a>
+                        </div>
+                    </div>
+                )
+            }
 
             {/* Edit Profile Modal */}
             {
