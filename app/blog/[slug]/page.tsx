@@ -119,6 +119,38 @@ async function getRecentPosts(currentPostId: string) {
     return posts.map(serializePost);
 }
 
+async function getBeginnerGuides(currentPostId: string) {
+    await dbConnect();
+    const posts = await Post.find({
+        _id: { $ne: currentPostId },
+        status: 'published',
+        isDeleted: false,
+        tags: 'beginner-guide'
+    })
+        .sort({ createdAt: -1 })
+        .limit(3)
+        .select('title slug createdAt publishedAt')
+        .lean();
+
+    return posts.map(serializePost);
+}
+
+async function getWatchOrders(currentPostId: string) {
+    await dbConnect();
+    const posts = await Post.find({
+        _id: { $ne: currentPostId },
+        status: 'published',
+        isDeleted: false,
+        tags: { $regex: /watch[- ]order/i }
+    })
+        .sort({ createdAt: -1 })
+        .limit(3)
+        .select('title slug createdAt publishedAt')
+        .lean();
+
+    return posts.map(serializePost);
+}
+
 export default async function BlogPostPage({ params }: Props) {
     const { slug } = await params;
     const post = await getPost(slug);
@@ -127,9 +159,11 @@ export default async function BlogPostPage({ params }: Props) {
         notFound();
     }
 
-    const [relatedPosts, recentPosts] = await Promise.all([
+    const [relatedPosts, recentPosts, beginnerGuides, watchOrders] = await Promise.all([
         getRelatedPosts(post._id, post.tags, post.categories),
-        getRecentPosts(post._id)
+        getRecentPosts(post._id),
+        getBeginnerGuides(post._id),
+        getWatchOrders(post._id)
     ]);
 
     return (
@@ -191,19 +225,19 @@ export default async function BlogPostPage({ params }: Props) {
                                     Start Watching
                                 </h3>
                                 <ul className="space-y-2">
-                                    {[
-                                        { title: 'Top 10 Anime for Beginners', href: '#' },
-                                        { title: 'Understanding Anime Genres', href: '#' },
-                                        { title: 'How to Watch Anime Legal', href: '#' },
-                                    ].map((item) => (
-                                        <li key={item.title}>
-                                            <Link href={item.href} className="group block">
-                                                <h4 className="text-sm font-medium text-gray-800 group-hover:text-blue-600 transition-colors">
-                                                    {item.title}
-                                                </h4>
-                                            </Link>
-                                        </li>
-                                    ))}
+                                    {beginnerGuides.length > 0 ? (
+                                        beginnerGuides.map((item: any) => (
+                                            <li key={item._id}>
+                                                <Link href={`/blog/${item.slug}`} className="group block">
+                                                    <h4 className="text-sm font-medium text-gray-800 group-hover:text-blue-600 transition-colors">
+                                                        {item.title}
+                                                    </h4>
+                                                </Link>
+                                            </li>
+                                        ))
+                                    ) : (
+                                        <li className="text-gray-500 text-xs italic">No guides found.</li>
+                                    )}
                                 </ul>
                             </div>
 
@@ -237,19 +271,19 @@ export default async function BlogPostPage({ params }: Props) {
                                     Watch Orders
                                 </h3>
                                 <ul className="space-y-2">
-                                    {[
-                                        { title: 'Fate Series Watch Order', href: '#' },
-                                        { title: 'Monogatari Series Order', href: '#' },
-                                        { title: 'Gundam Universe Guide', href: '#' },
-                                    ].map((item) => (
-                                        <li key={item.title}>
-                                            <Link href={item.href} className="group block">
-                                                <h4 className="text-sm font-medium text-gray-800 group-hover:text-blue-600 transition-colors">
-                                                    {item.title}
-                                                </h4>
-                                            </Link>
-                                        </li>
-                                    ))}
+                                    {watchOrders.length > 0 ? (
+                                        watchOrders.map((item: any) => (
+                                            <li key={item._id}>
+                                                <Link href={`/blog/${item.slug}`} className="group block">
+                                                    <h4 className="text-sm font-medium text-gray-800 group-hover:text-blue-600 transition-colors">
+                                                        {item.title}
+                                                    </h4>
+                                                </Link>
+                                            </li>
+                                        ))
+                                    ) : (
+                                        <li className="text-gray-500 text-xs italic">No watch orders found.</li>
+                                    )}
                                 </ul>
                             </div>
                         </div>

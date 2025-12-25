@@ -24,10 +24,50 @@ async function getPosts() {
     }));
 }
 
+async function getBeginnerGuides() {
+    await dbConnect();
+    const posts = await Post.find({
+        status: 'published',
+        isDeleted: false,
+        tags: 'beginner-guide'
+    })
+        .sort({ createdAt: -1 })
+        .limit(3)
+        .select('title slug')
+        .lean();
+
+    return posts.map(post => ({
+        ...post,
+        _id: post._id.toString(),
+    }));
+}
+
+async function getWatchOrders() {
+    await dbConnect();
+    const posts = await Post.find({
+        status: 'published',
+        isDeleted: false,
+        tags: { $regex: /watch[- ]order/i }
+    })
+        .sort({ createdAt: -1 })
+        .limit(3)
+        .select('title slug')
+        .lean();
+
+    return posts.map(post => ({
+        ...post,
+        _id: post._id.toString(),
+    }));
+}
+
 export const revalidate = 60; // ISR: Revalidate every 60 seconds
 
 export default async function HomePage() {
-    const posts = await getPosts();
+    const [posts, beginnerGuides, watchOrders] = await Promise.all([
+        getPosts(),
+        getBeginnerGuides(),
+        getWatchOrders()
+    ]);
 
     return (
         <div className="bg-gray-50 min-h-screen">
@@ -119,20 +159,20 @@ export default async function HomePage() {
                                 Start Watching
                             </h3>
                             <ul className="space-y-4">
-                                {[
-                                    { title: 'Top 10 Anime for Beginners', href: '#' },
-                                    { title: 'Understanding Anime Genres', href: '#' },
-                                    { title: 'How to Watch Anime Legal', href: '#' },
-                                ].map((item) => (
-                                    <li key={item.title}>
-                                        <Link href={item.href} className="group block">
-                                            <h4 className="text-gray-800 font-medium group-hover:text-blue-600 transition-colors">
-                                                {item.title}
-                                            </h4>
-                                            <p className="text-xs text-gray-500 mt-1">Beginner Guide</p>
-                                        </Link>
-                                    </li>
-                                ))}
+                                {beginnerGuides.length > 0 ? (
+                                    beginnerGuides.map((item: any) => (
+                                        <li key={item._id}>
+                                            <Link href={`/blog/${item.slug}`} className="group block">
+                                                <h4 className="text-gray-800 font-medium group-hover:text-blue-600 transition-colors">
+                                                    {item.title}
+                                                </h4>
+                                                <p className="text-xs text-gray-500 mt-1">Beginner Guide</p>
+                                            </Link>
+                                        </li>
+                                    ))
+                                ) : (
+                                    <li className="text-gray-500 text-xs italic">No guides found.</li>
+                                )}
                             </ul>
                         </div>
 
@@ -143,20 +183,20 @@ export default async function HomePage() {
                                 Watch Orders
                             </h3>
                             <ul className="space-y-4">
-                                {[
-                                    { title: 'Fate Series Watch Order', href: '#' },
-                                    { title: 'Monogatari Series Order', href: '#' },
-                                    { title: 'Gundam Universe Guide', href: '#' },
-                                ].map((item) => (
-                                    <li key={item.title}>
-                                        <Link href={item.href} className="group block">
-                                            <h4 className="text-gray-800 font-medium group-hover:text-blue-600 transition-colors">
-                                                {item.title}
-                                            </h4>
-                                            <p className="text-xs text-gray-500 mt-1">Navigation Guide</p>
-                                        </Link>
-                                    </li>
-                                ))}
+                                {watchOrders.length > 0 ? (
+                                    watchOrders.map((item: any) => (
+                                        <li key={item._id}>
+                                            <Link href={`/blog/${item.slug}`} className="group block">
+                                                <h4 className="text-gray-800 font-medium group-hover:text-blue-600 transition-colors">
+                                                    {item.title}
+                                                </h4>
+                                                <p className="text-xs text-gray-500 mt-1">Navigation Guide</p>
+                                            </Link>
+                                        </li>
+                                    ))
+                                ) : (
+                                    <li className="text-gray-500 text-xs italic">No watch orders found.</li>
+                                )}
                             </ul>
                         </div>
 
