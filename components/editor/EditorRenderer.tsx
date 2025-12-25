@@ -1,18 +1,56 @@
-import React from 'react';
+
+'use client';
+
+import React, { useEffect, useRef } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 interface EditorRendererProps {
     content: string;
 }
 
 export default function EditorRenderer({ content }: EditorRendererProps) {
+    const router = useRouter();
+    const containerRef = useRef<HTMLDivElement>(null);
     let data;
+
+    useEffect(() => {
+        const container = containerRef.current;
+        if (!container) return;
+
+        const handleLinkClick = (e: MouseEvent) => {
+            const target = e.target as HTMLElement;
+            const anchor = target.closest('a');
+
+            if (anchor && anchor.href) {
+                const url = new URL(anchor.href);
+
+                // Check if it's an internal link
+                if (url.origin === window.location.origin) {
+                    // Allow opening in new tab/window with modifier keys
+                    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+
+                    // Allow download links to proceed naturally
+                    if (anchor.hasAttribute('download')) return;
+
+                    // Prevent default full page reload
+                    e.preventDefault();
+                    router.push(url.pathname + url.search + url.hash);
+                }
+            }
+        };
+
+        container.addEventListener('click', handleLinkClick);
+        return () => container.removeEventListener('click', handleLinkClick);
+    }, [router]);
+
     try {
         data = JSON.parse(content);
     } catch (e) {
         // Fallback for legacy plain text content: preserve newlines
         return (
             <div
+                ref={containerRef}
                 className="prose prose-lg prose-blue mx-auto text-gray-500"
                 dangerouslySetInnerHTML={{ __html: (content || '').replace(/\n/g, '<br />') }}
             />
@@ -20,11 +58,21 @@ export default function EditorRenderer({ content }: EditorRendererProps) {
     }
 
     if (!data.blocks) {
-        return <div className="prose prose-lg prose-blue mx-auto text-gray-500 whitespace-pre-wrap">{content}</div>;
+        return (
+            <div
+                ref={containerRef}
+                className="prose prose-lg prose-blue mx-auto text-gray-500 whitespace-pre-wrap"
+            >
+                {content}
+            </div>
+        );
     }
 
     return (
-        <div className="prose prose-lg prose-blue mx-auto text-gray-500">
+        <div
+            ref={containerRef}
+            className="prose prose-lg prose-blue mx-auto text-gray-500"
+        >
             {data.blocks.map((block: any, index: number) => (
                 <Block key={index} block={block} />
             ))}
