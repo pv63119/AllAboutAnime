@@ -32,18 +32,21 @@ export default async function HomePage() {
     return (
         <div className="bg-gray-50 min-h-screen">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-                <div className="text-center">
-                    <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
-                        Your Ultimate Anime Destination
+                <div className="text-center mb-16">
+                    <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl md:text-6xl mb-6">
+                        AllAboutAnime – Simple Anime Guides for Beginners
                     </h1>
-                    <p className="mx-auto mt-3 max-w-md text-base text-gray-500 sm:text-lg md:mt-5 md:max-w-3xl md:text-xl">
-                        News, reviews, theories, and deep dives into your favorite series from the otaku community.
+                    <p className="mx-auto max-w-md text-base text-gray-500 sm:text-lg md:max-w-3xl md:text-xl">
+                        Welcome to your starting point for everything anime. Whether you're looking for your first series, trying to figure out the correct watch order for a complex franchise, or just want to stay updated with the latest releases, we've got you covered with simple, easy-to-understand guides.
                     </p>
                 </div>
 
                 <div className="mt-16 grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Main Feed */}
                     <div className="lg:col-span-2 flex flex-col gap-8">
+                        <h2 className="text-3xl font-bold text-gray-900 border-b border-gray-200 pb-2">
+                            Latest Articles
+                        </h2>
                         {posts.length > 0 ? (
                             posts.map((post: any, index: number) => (
                                 <div key={post._id} className="flex flex-col overflow-hidden rounded-2xl shadow-md bg-white border border-gray-100 transition-all hover:shadow-xl duration-300">
@@ -109,6 +112,54 @@ export default async function HomePage() {
 
                     {/* Sidebar */}
                     <div className="lg:col-span-1 space-y-8">
+                        {/* Beginner Guides Widget */}
+                        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                            <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-3 border-b border-gray-100 pb-4">
+                                <span className="w-1.5 h-6 bg-green-500 rounded-full"></span>
+                                Start Watching
+                            </h3>
+                            <ul className="space-y-4">
+                                {[
+                                    { title: 'Top 10 Anime for Beginners', href: '#' },
+                                    { title: 'Understanding Anime Genres', href: '#' },
+                                    { title: 'How to Watch Anime Legal', href: '#' },
+                                ].map((item) => (
+                                    <li key={item.title}>
+                                        <Link href={item.href} className="group block">
+                                            <h4 className="text-gray-800 font-medium group-hover:text-blue-600 transition-colors">
+                                                {item.title}
+                                            </h4>
+                                            <p className="text-xs text-gray-500 mt-1">Beginner Guide</p>
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+
+                        {/* Watch Order Widget */}
+                        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                            <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-3 border-b border-gray-100 pb-4">
+                                <span className="w-1.5 h-6 bg-purple-500 rounded-full"></span>
+                                Watch Orders
+                            </h3>
+                            <ul className="space-y-4">
+                                {[
+                                    { title: 'Fate Series Watch Order', href: '#' },
+                                    { title: 'Monogatari Series Order', href: '#' },
+                                    { title: 'Gundam Universe Guide', href: '#' },
+                                ].map((item) => (
+                                    <li key={item.title}>
+                                        <Link href={item.href} className="group block">
+                                            <h4 className="text-gray-800 font-medium group-hover:text-blue-600 transition-colors">
+                                                {item.title}
+                                            </h4>
+                                            <p className="text-xs text-gray-500 mt-1">Navigation Guide</p>
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+
                         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-24">
                             <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-3 border-b border-gray-100 pb-4">
                                 <span className="w-1.5 h-6 bg-blue-600 rounded-full"></span>
