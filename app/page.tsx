@@ -24,12 +24,12 @@ async function getPosts() {
     }));
 }
 
-async function getBeginnerGuides() {
+async function getTrendingPosts() {
     await dbConnect();
     const posts = await Post.find({
         status: 'published',
         isDeleted: false,
-        tags: 'beginner-guide'
+        tags: 'trending'
     })
         .sort({ createdAt: -1 })
         .limit(3)
@@ -63,9 +63,9 @@ async function getWatchOrders() {
 export const revalidate = 60; // ISR: Revalidate every 60 seconds
 
 export default async function HomePage() {
-    const [posts, beginnerGuides, watchOrders] = await Promise.all([
+    const [posts, trendingPosts, watchOrders] = await Promise.all([
         getPosts(),
-        getBeginnerGuides(),
+        getTrendingPosts(),
         getWatchOrders()
     ]);
 
@@ -74,10 +74,13 @@ export default async function HomePage() {
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
                 <div className="text-center mb-16">
                     <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl md:text-6xl mb-6">
-                        AllAboutAnime – Simple Anime Guides for Beginners
+                        AllAboutAnime – Anime Guides, Watch Orders & Deep Dives
                     </h1>
+                    <p className="mx-auto max-w-md text-lg sm:text-xl md:max-w-3xl md:text-2xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                        Anime guides, watch orders, rankings & deep dives — from first episode to final arc.
+                    </p>
                     <p className="mx-auto max-w-md text-base text-gray-500 sm:text-lg md:max-w-3xl md:text-xl">
-                        Welcome to your starting point for everything anime. Whether you're looking for your first series, trying to figure out the correct watch order for a complex franchise, or just want to stay updated with the latest releases, we've got you covered with simple, easy-to-understand guides.
+                        Welcome to AllAboutAnime, your home for anime guides, watch orders, rankings, and in-depth analysis. Whether you’re starting your very first anime, searching for the correct watch order for a long-running series, or diving deeper into popular arcs and characters, you’ll find clear guides and honest fan-driven insights here.
                     </p>
                 </div>
 
@@ -151,78 +154,78 @@ export default async function HomePage() {
                     </div>
 
                     {/* Sidebar */}
-                    <div className="lg:col-span-1 space-y-8">
-                        {/* Beginner Guides Widget */}
-                        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                            <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-3 border-b border-gray-100 pb-4">
-                                <span className="w-1.5 h-6 bg-green-500 rounded-full"></span>
-                                Start Watching
-                            </h3>
-                            <ul className="space-y-4">
-                                {beginnerGuides.length > 0 ? (
-                                    beginnerGuides.map((item: any) => (
-                                        <li key={item._id}>
-                                            <Link href={`/blog/${item.slug}`} className="group block">
-                                                <h4 className="text-gray-800 font-medium group-hover:text-blue-600 transition-colors">
-                                                    {item.title}
+                    {/* Sidebar */}
+                    <div className="lg:col-span-1">
+                        <div className="sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto space-y-4 pr-2 custom-scrollbar">
+                            {/* Trending Widget */}
+                            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+                                <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2 border-b border-gray-100 pb-2">
+                                    <span className="w-1 h-4 bg-red-500 rounded-full"></span>
+                                    Trending
+                                </h3>
+                                <ul className="space-y-2">
+                                    {trendingPosts.length > 0 ? (
+                                        trendingPosts.map((item: any) => (
+                                            <li key={item._id}>
+                                                <Link href={`/blog/${item.slug}`} className="group block">
+                                                    <h4 className="text-sm font-medium text-gray-800 group-hover:text-blue-600 transition-colors flex items-start gap-2">
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-gray-300 mt-1.5 shrink-0 group-hover:bg-blue-600 transition-colors" />
+                                                        <span>{item.title}</span>
+                                                    </h4>
+                                                </Link>
+                                            </li>
+                                        ))
+                                    ) : (
+                                        <li className="text-gray-500 text-xs italic">No trending posts.</li>
+                                    )}
+                                </ul>
+                            </div>
+
+                            {/* Watch Order Widget */}
+                            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+                                <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2 border-b border-gray-100 pb-2">
+                                    <span className="w-1 h-4 bg-purple-500 rounded-full"></span>
+                                    Watch Orders
+                                </h3>
+                                <ul className="space-y-2">
+                                    {watchOrders.length > 0 ? (
+                                        watchOrders.map((item: any) => (
+                                            <li key={item._id}>
+                                                <Link href={`/blog/${item.slug}`} className="group block">
+                                                    <h4 className="text-sm font-medium text-gray-800 group-hover:text-blue-600 transition-colors flex items-start gap-2">
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-gray-300 mt-1.5 shrink-0 group-hover:bg-blue-600 transition-colors" />
+                                                        <span>{item.title}</span>
+                                                    </h4>
+                                                </Link>
+                                            </li>
+                                        ))
+                                    ) : (
+                                        <li className="text-gray-500 text-xs italic">No watch orders found.</li>
+                                    )}
+                                </ul>
+                            </div>
+
+                            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+                                <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2 border-b border-gray-100 pb-2">
+                                    <span className="w-1 h-4 bg-blue-600 rounded-full"></span>
+                                    Recently Added
+                                </h3>
+                                <ul className="space-y-2">
+                                    {posts.slice(0, 5).map((post: any) => (
+                                        <li key={post._id} className="group">
+                                            <Link href={`/blog/${post.slug}`} className="block">
+                                                <h4 className="text-sm font-medium text-gray-800 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug flex items-start gap-2">
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-gray-300 mt-1.5 shrink-0 group-hover:bg-blue-600 transition-colors" />
+                                                    <span>{post.title}</span>
                                                 </h4>
-                                                <p className="text-xs text-gray-500 mt-1">Beginner Guide</p>
                                             </Link>
                                         </li>
-                                    ))
-                                ) : (
-                                    <li className="text-gray-500 text-xs italic">No guides found.</li>
-                                )}
-                            </ul>
-                        </div>
-
-                        {/* Watch Order Widget */}
-                        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                            <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-3 border-b border-gray-100 pb-4">
-                                <span className="w-1.5 h-6 bg-purple-500 rounded-full"></span>
-                                Watch Orders
-                            </h3>
-                            <ul className="space-y-4">
-                                {watchOrders.length > 0 ? (
-                                    watchOrders.map((item: any) => (
-                                        <li key={item._id}>
-                                            <Link href={`/blog/${item.slug}`} className="group block">
-                                                <h4 className="text-gray-800 font-medium group-hover:text-blue-600 transition-colors">
-                                                    {item.title}
-                                                </h4>
-                                                <p className="text-xs text-gray-500 mt-1">Navigation Guide</p>
-                                            </Link>
-                                        </li>
-                                    ))
-                                ) : (
-                                    <li className="text-gray-500 text-xs italic">No watch orders found.</li>
-                                )}
-                            </ul>
-                        </div>
-
-                        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-24">
-                            <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-3 border-b border-gray-100 pb-4">
-                                <span className="w-1.5 h-6 bg-blue-600 rounded-full"></span>
-                                Recently Added
-                            </h3>
-                            <ul className="space-y-4">
-                                {posts.slice(0, 10).map((post: any) => (
-                                    <li key={post._id} className="group">
-                                        <Link href={`/blog/${post.slug}`} className="block">
-                                            <h4 className="text-gray-800 font-medium group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug">
-                                                {post.title}
-                                            </h4>
-                                            <time className="text-xs text-gray-400 mt-1.5 flex items-center gap-1">
-                                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                                {new Date(post.createdAt).toLocaleDateString()}
-                                            </time>
-                                        </Link>
-                                    </li>
-                                ))}
-                                {posts.length === 0 && (
-                                    <li className="text-gray-500 text-sm italic">No recent posts.</li>
-                                )}
-                            </ul>
+                                    ))}
+                                    {posts.length === 0 && (
+                                        <li className="text-gray-500 text-sm italic">No recent posts.</li>
+                                    )}
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>

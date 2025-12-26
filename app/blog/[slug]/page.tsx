@@ -119,13 +119,13 @@ async function getRecentPosts(currentPostId: string) {
     return posts.map(serializePost);
 }
 
-async function getBeginnerGuides(currentPostId: string) {
+async function getTrendingPosts(currentPostId: string) {
     await dbConnect();
     const posts = await Post.find({
         _id: { $ne: currentPostId },
         status: 'published',
         isDeleted: false,
-        tags: 'beginner-guide'
+        tags: 'trending'
     })
         .sort({ createdAt: -1 })
         .limit(3)
@@ -159,10 +159,10 @@ export default async function BlogPostPage({ params }: Props) {
         notFound();
     }
 
-    const [relatedPosts, recentPosts, beginnerGuides, watchOrders] = await Promise.all([
+    const [relatedPosts, recentPosts, trendingPosts, watchOrders] = await Promise.all([
         getRelatedPosts(post._id, post.tags, post.categories),
         getRecentPosts(post._id),
-        getBeginnerGuides(post._id),
+        getTrendingPosts(post._id),
         getWatchOrders(post._id)
     ]);
 
@@ -208,8 +208,9 @@ export default async function BlogPostPage({ params }: Props) {
                                         {relatedPosts.map((relatedPost: any) => (
                                             <li key={relatedPost._id}>
                                                 <Link href={`/blog/${relatedPost.slug}`} className="group block">
-                                                    <h4 className="text-sm font-medium text-gray-800 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug">
-                                                        {relatedPost.title}
+                                                    <h4 className="text-sm font-medium text-gray-800 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug flex items-start gap-2">
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-gray-300 mt-1.5 shrink-0 group-hover:bg-blue-600 transition-colors" />
+                                                        <span>{relatedPost.title}</span>
                                                     </h4>
                                                 </Link>
                                             </li>
@@ -218,25 +219,26 @@ export default async function BlogPostPage({ params }: Props) {
                                 </div>
                             )}
 
-                            {/* 2. Start Watching */}
+                            {/* 2. Trending */}
                             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
                                 <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2 border-b border-gray-100 pb-2">
-                                    <span className="w-1 h-4 bg-green-500 rounded-full"></span>
-                                    Start Watching
+                                    <span className="w-1 h-4 bg-red-500 rounded-full"></span>
+                                    Trending
                                 </h3>
                                 <ul className="space-y-2">
-                                    {beginnerGuides.length > 0 ? (
-                                        beginnerGuides.map((item: any) => (
+                                    {trendingPosts.length > 0 ? (
+                                        trendingPosts.map((item: any) => (
                                             <li key={item._id}>
                                                 <Link href={`/blog/${item.slug}`} className="group block">
-                                                    <h4 className="text-sm font-medium text-gray-800 group-hover:text-blue-600 transition-colors">
-                                                        {item.title}
+                                                    <h4 className="text-sm font-medium text-gray-800 group-hover:text-blue-600 transition-colors flex items-start gap-2">
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-gray-300 mt-1.5 shrink-0 group-hover:bg-blue-600 transition-colors" />
+                                                        <span>{item.title}</span>
                                                     </h4>
                                                 </Link>
                                             </li>
                                         ))
                                     ) : (
-                                        <li className="text-gray-500 text-xs italic">No guides found.</li>
+                                        <li className="text-gray-500 text-xs italic">No trending posts.</li>
                                     )}
                                 </ul>
                             </div>
@@ -252,8 +254,9 @@ export default async function BlogPostPage({ params }: Props) {
                                         recentPosts.map((recentPost: any) => (
                                             <li key={recentPost._id}>
                                                 <Link href={`/blog/${recentPost.slug}`} className="group block">
-                                                    <h4 className="text-sm font-medium text-gray-800 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug">
-                                                        {recentPost.title}
+                                                    <h4 className="text-sm font-medium text-gray-800 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug flex items-start gap-2">
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-gray-300 mt-1.5 shrink-0 group-hover:bg-blue-600 transition-colors" />
+                                                        <span>{recentPost.title}</span>
                                                     </h4>
                                                 </Link>
                                             </li>
@@ -275,8 +278,9 @@ export default async function BlogPostPage({ params }: Props) {
                                         watchOrders.map((item: any) => (
                                             <li key={item._id}>
                                                 <Link href={`/blog/${item.slug}`} className="group block">
-                                                    <h4 className="text-sm font-medium text-gray-800 group-hover:text-blue-600 transition-colors">
-                                                        {item.title}
+                                                    <h4 className="text-sm font-medium text-gray-800 group-hover:text-blue-600 transition-colors flex items-start gap-2">
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-gray-300 mt-1.5 shrink-0 group-hover:bg-blue-600 transition-colors" />
+                                                        <span>{item.title}</span>
                                                     </h4>
                                                 </Link>
                                             </li>

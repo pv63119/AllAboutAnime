@@ -37,6 +37,22 @@ export default function PostEditor({ initialData, isEditing = false }: PostEdito
     const [status, setStatus] = useState<string>(initialData?.status || 'draft');
     const [submitting, setSubmitting] = useState(false);
 
+
+
+    const toggleMetaTag = (tagToToggle: string) => {
+        const currentTags = tags.split(',').map(t => t.trim()).filter(Boolean);
+        const lowerTag = tagToToggle.toLowerCase();
+        const exists = currentTags.some(t => t.toLowerCase() === lowerTag);
+
+        let newTags;
+        if (exists) {
+            newTags = currentTags.filter(t => t.toLowerCase() !== lowerTag);
+        } else {
+            newTags = [...currentTags, tagToToggle];
+        }
+        setTags(newTags.join(', '));
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setSubmitting(true);
@@ -176,6 +192,27 @@ export default function PostEditor({ initialData, isEditing = false }: PostEdito
                                     onChange={(e) => setTags(e.target.value)}
                                     className="block w-full flex-1 rounded-lg border border-gray-300 p-4 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 resize-none transition-shadow min-h-[100px] md:min-h-0"
                                 />
+                                {/* Meta Tags Options */}
+                                <div className="mt-3 flex gap-4">
+                                    <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer select-none hover:text-gray-900">
+                                        <input
+                                            type="checkbox"
+                                            checked={tags.split(',').map(t => t.trim().toLowerCase()).includes('trending')}
+                                            onChange={() => toggleMetaTag('trending')}
+                                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 h-4 w-4"
+                                        />
+                                        Trending
+                                    </label>
+                                    <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer select-none hover:text-gray-900">
+                                        <input
+                                            type="checkbox"
+                                            checked={tags.split(',').map(t => t.trim().toLowerCase()).includes('watch-order')}
+                                            onChange={() => toggleMetaTag('watch-order')}
+                                            className="rounded border-gray-300 text-purple-600 focus:ring-purple-500 h-4 w-4"
+                                        />
+                                        Watch Order
+                                    </label>
+                                </div>
                             </div>
                         </div>
 

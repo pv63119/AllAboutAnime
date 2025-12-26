@@ -37,9 +37,9 @@ export default function Navbar() {
                     <div className="flex-shrink-0">
                         <Link
                             href="/"
-                            className="text-xl font-semibold tracking-tight text-gray-900 hover:text-blue-600 transition-colors"
+                            className="text-xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:opacity-80 transition-opacity"
                         >
-                            AllAbout<span className="text-blue-600">Anime</span>
+                            AllAboutAnime
                         </Link>
                     </div>
 
